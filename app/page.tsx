@@ -4,7 +4,9 @@ function Home() {
   return (
     <>
       <Header />
-      <Hero />
+      <main>
+        <Hero />
+      </main>
     </>
   )
 }
