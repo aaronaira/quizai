@@ -1,8 +1,11 @@
 
-import SigInForm from '@/app/components/SigInForm'
-import SigInInfo from '../components/SigInInfo'
+import SigInForm from '@/app/components/SignInForm'
+import SignInfo from '../components/SignInfo'
 import { auth } from "@/app/auth"
 import { redirect } from 'next/navigation'
+
+const title = "Log in to your workspace"
+const subTitle = "Enter your email and password to access your QuizAI account. You're just one step away from creating awesome tests to boost your learning speed."
 
 async function SignIn() {
     const session = await auth()
@@ -16,7 +19,7 @@ async function SignIn() {
                 <SigInForm />
             </div>
             <div className='flex items-center p-4 w-full h-screen justify-center basis-2/5 bg-slate-100'>
-                <SigInInfo />
+                <SignInfo title={title} subTitle={subTitle} />
             </div>
         </div>
     )
