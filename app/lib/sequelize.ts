@@ -7,7 +7,8 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
 });
 
 if (process.env.NODE_ENV === "development") {
-    sequelize.sync()
+    await sequelize.sync({ alter: true })
+
 }
 
 export default sequelize;
