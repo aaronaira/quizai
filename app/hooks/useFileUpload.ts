@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface typesMessage {
@@ -9,6 +10,8 @@ export function useFileUpload() {
     const [showMessage, setShowMessage] = useState<boolean>(false);
     const [message, setMessage] = useState<typesMessage>({ text: "", type: null })
     const [loading, setLoading] = useState<boolean>(false)
+
+    const router = useRouter();
 
     useEffect(() => {
 
@@ -51,12 +54,16 @@ export function useFileUpload() {
                 body: formData
             })
 
-            console.log(response)
+            if (response.status === 401) router.push('/signin')
+
             const data = await response.json()
-            console.log(data)
+
+
             if (data?.message === "OK") {
                 setMessage({ text: `File was uploaded successfully`, type: "success" })
             }
+
+
 
         } catch (err) {
             console.log(err)
