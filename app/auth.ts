@@ -41,14 +41,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.id = user.id as string;  // ✅ Asegura que id es string
+                token.id = user.id as string;
             }
             return token;
         },
 
         async session({ session, token }) {
             if (session.user && typeof token.id === 'string') {
-                session.user.id = token.id;  // ✅ token.id se asigna como string
+                session.user.id = token.id as string;
             }
             return session;
         },
