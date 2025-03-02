@@ -36,9 +36,14 @@ function SigInForm() {
 
     async function onSubmit(values: z.infer<typeof signInSchema>) {
         const response = await signInAction(values)
-        if (response) {
+        const { error, success } = response
+
+        if (error) {
+            setError(error)
+        } else {
             router.push('/')
         }
+
     }
 
     return (

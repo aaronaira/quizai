@@ -36,13 +36,13 @@ function SignUpForm() {
 
     async function onSubmit(values: z.infer<typeof signUpSchema>) {
         const response = await signUpAction(values)
-
-        if (response?.error) {
-            setError(response?.error as string)
-            return
+        const { error, success } = response
+        if (error) {
+            setError(error as string)
+        } else {
+            router.push('/')
         }
 
-        if (response?.success) router.push('/')
     }
 
     return (
