@@ -6,7 +6,8 @@ import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 import { signInSchema } from "./lib/zod";
-import User from "./models/user";
+import { models } from "@/app/models";
+import { Model } from 'sequelize';
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -19,14 +20,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const { data, success } = signInSchema.safeParse(credentials)
                 if (!success) throw new Error('User information is wrong')
 
-                const user = await User.findOne({ where: { email: data.email } })
+                const user = await models.User.findOne({ where: { email: data.email } })
 
                 if (!user) throw new Error("User doesn't exists")
 
-                if (user.password) {
-                    const isValidPassword = await bcrypt.compare(data.password, user.password);
-                    if (!isValidPassword) throw new Error('Password is wrong')
-                }
+                if (!await user.comparePassword(data.password)) throw new Error("Password doesn't match")
 
                 return {
                     id: user.id,
