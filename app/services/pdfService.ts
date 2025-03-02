@@ -2,15 +2,32 @@ import pdf from 'pdf-parse';
 import crypto from 'crypto'
 import path from "path";
 import fs from 'fs/promises';
-import { sequelize, models } from '@/app/models';
+import { models } from '@/app/models';
 
 const BASE_DIR = path.join(process.cwd(), "uploads");
 
-export async function processPDF(userId: string, fileBuffer: Buffer, fileName: string) {
-    const user = await models.User.findByPk(userId);
-    console.log("EL USER =>>>>>>>>>>>>>>>>>", user);
-}
+export async function processPDF(userId: string, fileBuffer: Buffer, file: File) {
+    const hashPDF: string = await hash(fileBuffer)
+    const pdfs = await models.PDF.findAll({ where: { userId } });
+    const isRepeated = pdfs.some(pdf => pdf.hash === hashPDF)
 
+    if (isRepeated) {
+        throw new Error("File already uploaded, you can't duplicate files" as any);
+    }
+
+    await store(userId, fileBuffer, file.name)
+    const content = await getContent(fileBuffer)
+
+    const pdf = await models.PDF.create({
+        name: file.name,
+        hash: hashPDF,
+        size: file.size,
+        content,
+        userId
+    })
+
+    return pdf;
+}
 
 async function hash(fileBuffer: Buffer) {
     const hash = crypto.createHash('md5');
@@ -37,7 +54,7 @@ async function store(userId: string, fileBuffer: Buffer, fileName: string) {
     }
 }
 
-async function content(buffer: any) {
+async function getContent(buffer: any) {
     try {
         const pdfData = await pdf(buffer);
         return pdfData.text.trim()
