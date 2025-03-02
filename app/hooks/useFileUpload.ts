@@ -49,7 +49,7 @@ export function useFileUpload() {
         const formData = new FormData();
         formData.append("file", file);
         try {
-            const response = await fetch('/api', {
+            const response = await fetch('/api/pdf', {
                 method: 'POST',
                 body: formData
             })
@@ -58,9 +58,12 @@ export function useFileUpload() {
 
             const data = await response.json()
 
+            const { error, success } = data;
 
-            if (data?.message === "OK") {
-                setMessage({ text: `File was uploaded successfully`, type: "success" })
+            if (error) {
+                setMessage({ text: error, type: "error" })
+            } else {
+                setMessage({ text: success, type: "success" })
             }
 
 
