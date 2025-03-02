@@ -26,12 +26,12 @@ export async function POST(req: Request) {
         const buffer = Buffer.from(new Uint8Array(data));
         const userId = session?.user?.id
 
-        processPDF(userId || 'trash', buffer, file.name)
+        await processPDF(userId || 'trash', buffer, file)
 
-        return Response.json({ message: 'OK' }, { status: 200 });
+        return Response.json({ success: 'File was uploaded successfully' }, { status: 200 });
 
 
     } catch (error: any) {
-        return Response.json({ message: `Error: ${error.message}` }, { status: 500 });
+        return Response.json({ error: `Error: ${error.message}` }, { status: 500 });
     }
 }
