@@ -1,8 +1,7 @@
 'use server'
 import { z } from 'zod';
 import { signInSchema, signUpSchema } from '../lib/zod';
-import bcrypt from 'bcrypt';
-import User from '../models/user';
+import { models } from '@/app/models';
 import { signIn } from '../auth';
 import { AuthError } from 'next-auth';
 
@@ -12,15 +11,13 @@ export async function signUpAction(values: z.infer<typeof signUpSchema>) {
 
         if (!success) return { error: 'User information is wrong' }
 
-        const user = await User.findOne({ where: { email: data.email } })
+        const user = await models.User.findOne({ where: { email: data.email } })
         if (user) return { error: 'User email already exist' }
 
-        const cryptPassowrd = await bcrypt.hash(data.password, 10);
-
-        await User.create({
+        await models.User.create({
             name: data.name,
             email: data.email,
-            password: cryptPassowrd
+            password: data.password,
         })
 
         await signIn('credentials', {
@@ -42,7 +39,6 @@ export async function signInAction(values: z.infer<typeof signInSchema>) {
             'password': values.password,
             redirect: false
         })
-
         return { success: true }
     } catch (error) {
         if (error instanceof AuthError) {
