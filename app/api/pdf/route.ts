@@ -1,14 +1,15 @@
-import { extractPDF } from "../services/pdfService";
-import { auth } from "@/app/auth"
 
+import { getSession } from "@/app/services/authService";
+import { processPDF } from "@/app/services/pdfService";
+;
 export async function POST(req: Request) {
-    const session = await auth()
-
-    if (!session) {
-        return Response.json({ message: "Unauthorized" }, { status: 401 });
-    }
 
     try {
+        const session = await getSession();
+        if (!session) {
+            return Response.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
         const formData = await req.formData();
         const file = formData.get("file") as File | null;
 
@@ -17,18 +18,18 @@ export async function POST(req: Request) {
         }
 
         const data: ArrayBuffer | undefined = await file?.arrayBuffer();
+
         if (!data) {
             return Response.json({ message: 'File data is empty' }, { status: 400 });
         }
-        const buffer = Buffer.from(new Uint8Array(data));
 
-        try {
-            const pdfData = await extractPDF(buffer)
-            return Response.json({ message: 'OK', extractedText: pdfData }, { status: 200 });
-        } catch (pdfError: any) {
-            console.error('Error al procesar el PDF:', pdfError);
-            return Response.json({ message: `Error al procesar el PDF: ${pdfError.message}` }, { status: 500 });
-        }
+        const buffer = Buffer.from(new Uint8Array(data));
+        const userId = session?.user?.id
+
+        processPDF(userId || 'trash', buffer, file.name)
+
+        return Response.json({ message: 'OK' }, { status: 200 });
+
 
     } catch (error: any) {
         return Response.json({ message: `Error: ${error.message}` }, { status: 500 });
