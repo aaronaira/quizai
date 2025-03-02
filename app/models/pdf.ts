@@ -3,7 +3,7 @@ import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 // Definir atributos del modelo
 interface PDFAttributes {
-    id: string;
+    id?: string;
     name: string;
     hash: string;
     size: number;
@@ -15,12 +15,12 @@ interface PDFAttributes {
 interface PDFCreationAttributes extends Optional<PDFAttributes, 'id'> { }
 
 class PDF extends Model<PDFAttributes, PDFCreationAttributes> implements PDFAttributes {
-    public id!: string;
-    public name!: string;
-    public hash!: string;
-    public size!: number;
-    public content!: string;
-    public userId!: string;
+    declare id: string;
+    declare name: string;
+    declare hash: string;
+    declare size: number;
+    declare content: string;
+    declare userId: string;
 }
 
 export default (sequelize: Sequelize) => {
