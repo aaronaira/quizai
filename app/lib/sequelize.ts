@@ -6,9 +6,18 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
     dialect: "mysql",
 });
 
-if (process.env.NODE_ENV === "development") {
-    await sequelize.sync({ alter: true })
 
-}
+(async () => {
+    try {
+        await sequelize.authenticate();
+        await sequelize.sync({ force: false })
+        console.log("✅ Conexión a la base de datos exitosa");
+    } catch (error) {
+        console.error("❌ Error al conectar con la base de datos:", error);
+    }
+})();
+
+
+
 
 export default sequelize;
