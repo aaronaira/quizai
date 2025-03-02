@@ -1,74 +1,70 @@
-import sequelize from '../lib/sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import bcrypt from 'bcrypt';
 
-interface UserAttributes {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    password?: string | null;
-    email_verified?: Date | null;
+export interface UserAttributes {
+    id?: string;
+    name: string;
+    email: string;
+    password: string;
     image?: string | null;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
+export default (sequelize: Sequelize) => {
+    class User extends Model<UserAttributes> implements UserAttributes {
+        declare id: string;
+        declare name: string;
+        declare email: string;
+        declare password: string;
+        declare image: string | null;
 
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    declare id: string;
-    declare name: string | null;
-    declare email: string | null;
-    declare password: string | null;
-    declare image: string | null;
-
-    toJSON() {
-        return { ...this.get() };
+        async comparePassword(candidatePassword: string): Promise<boolean> {
+            return bcrypt.compare(candidatePassword, this.password);
+        }
     }
-}
 
-User.init(
-    {
-        id: {
-            type: DataTypes.CHAR(36),
-            primaryKey: true,
-            allowNull: false,
-            defaultValue: DataTypes.UUIDV4, // Para generar UUID automáticamente
-        },
-        name: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-        },
-        email: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-            unique: true,
-            validate: {
-                isEmail: true,
+    User.init(
+        {
+            id: {
+                type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV4,
+                primaryKey: true,
+            },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            image: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
         },
-        password: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-        },
-        email_verified: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        image: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-        },
-    },
-    {
-        sequelize,
-        modelName: 'User',
-        tableName: 'users',
-        defaultScope: {
-            attributes: {
-                include: ['id', 'name', 'image', 'email', 'password']
-            }
-        },
-        timestamps: false,
+        {
+            sequelize,
+            modelName: 'User',
+            tableName: 'users',
+            timestamps: true,
+        }
+    );
 
-    }
-);
+    User.addHook('beforeCreate', async (user: User) => {
+        try {
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            user.password = hashedPassword;
+        } catch (error) {
+            console.error('Error hashing password:', error);
+            throw new Error('Failed to hash password');
+        }
+    });
 
-export default User;
+
+    return User;
+};
