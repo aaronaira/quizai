@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import NextAuth from "next-auth";
 import SequelizeAdapter from "@auth/sequelize-adapter"
 import sequelize from "./lib/sequelize";
