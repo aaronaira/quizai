@@ -11,10 +11,11 @@
   "dependencies": {
     "@auth/sequelize-adapter": "^2.7.4",
     "@hookform/resolvers": "^3.10.0",
+    "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.474.0",
@@ -25,6 +26,7 @@
     "next-auth": "^5.0.0-beta.25",
     "pdf-parse": "^1.1.1",
     "pdf-text-extract": "^1.5.0",
+    "pg-hstore": "^2.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
@@ -38,7 +40,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/pdf-parse": "^1.1.4",
     "@types/react": "^19",
