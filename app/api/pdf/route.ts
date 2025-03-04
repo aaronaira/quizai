@@ -1,7 +1,24 @@
 
 import { getSession } from "@/app/services/authService";
-import { processPDF } from "@/app/services/pdfService";
-;
+import { processPDF, getAll } from "@/app/services/pdfService";
+import { auth } from "@/app/auth";
+
+export async function GET(req: Request) {
+    try {
+        const session = await auth();
+        if (!session) {
+            return Response.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        const pdfs = await getAll(session?.user?.id || '')
+
+        return Response.json({ data: pdfs })
+
+    } catch (error: any) {
+        return Response.json({ error: `Error: ${error.message}` }, { status: 500 });
+    }
+}
+
 export async function POST(req: Request) {
 
     try {
