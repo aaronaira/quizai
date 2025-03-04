@@ -2,9 +2,35 @@ import pdf from 'pdf-parse';
 import crypto from 'crypto'
 import path from "path";
 import fs from 'fs/promises';
+import { unlink } from 'fs/promises';
 import { models } from '@/app/models';
 
 const BASE_DIR = path.join(process.cwd(), "uploads");
+
+export async function getAll(userId: string) {
+    const pdfs = await models.PDF.findAll({ where: { userId } })
+    return pdfs;
+}
+
+export async function _delete(userId: string, hash: string) {
+    try {
+        const userPath = path.join(BASE_DIR, userId);
+        const pdf = await models.PDF.findOne({
+            where: {
+                userId,
+                hash
+            }
+        })
+
+        if (!pdf) throw new Error('PDF not found');
+        const filePath = path.join(userPath, pdf.name)
+        const deleteFile = await unlink(filePath)
+
+        return true;
+    } catch (error) {
+        throw new Error(`Internal Server Error: ${error}`)
+    }
+}
 
 export async function processPDF(userId: string, fileBuffer: Buffer, file: File) {
     const hashPDF: string = await hash(fileBuffer)
@@ -26,7 +52,6 @@ export async function processPDF(userId: string, fileBuffer: Buffer, file: File)
         userId
     })
 
-    return pdf;
 }
 
 async function hash(fileBuffer: Buffer) {
