@@ -5,12 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { User, LogOut, X } from 'lucide-react'
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react'
-
+import { useRouter } from 'next/navigation'
 function Avatar({ session }: { session: Session | null }) {
 
     const [subMenu, setSubMenu] = useState<boolean>(false)
     const menuRef = useRef<HTMLDivElement>(null)
-
+    const router = useRouter();
     const handleToggle = () => setSubMenu(!subMenu)
 
     useEffect(() => {
@@ -46,7 +46,7 @@ function Avatar({ session }: { session: Session | null }) {
                         className="absolute right-0 mt-2 min-w-[180px] rounded-2xl bg-white shadow-2xl p-3 z-20"
                     >
                         <ul className="flex flex-col gap-2 text-gray-700">
-                            <MenuItem icon={<User size={18} />} label="Profile" onClick={() => alert('Go to Profile')} />
+                            <MenuItem icon={<User size={18} />} label="Profile" onClick={() => router.push('/profile')} />
                             <MenuItem icon={<LogOut size={18} />} label="Logout" onClick={async () => await signOut({ redirectTo: "/" })} />
                         </ul>
                     </motion.div>
