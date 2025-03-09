@@ -10,12 +10,15 @@ export async function GET(req: Request) {
             return Response.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const pdfs = await getAll(session?.user?.id || '')
+        const { searchParams } = new URL(req.url);
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "10");
 
-        return Response.json({ data: pdfs })
+        const data = await getAll(session?.user?.id || '', page, limit)
+        return Response.json(data)
 
     } catch (error: any) {
-        return Response.json({ error: `Error: ${error.message}` }, { status: 500 });
+        return Response.json({ error: `Error: [${error.message}]` }, { status: 500 });
     }
 }
 
