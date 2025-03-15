@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
 import { User, BookOpenCheck, Settings, File } from 'lucide-react'
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Toaster } from "sonner";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
     const currentPath = usePathname();
@@ -33,6 +33,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                 {/* Contenido dinámico */}
                 <div className="flex flex-col p-4 w-3/4">
                     {children}
+                    <Toaster />
                 </div>
             </div>
         </div>
