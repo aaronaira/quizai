@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+
 interface typesMessage {
     text: string;
     type: "success" | "error" | null;
@@ -64,6 +65,7 @@ export function useFileUpload() {
                 setMessage({ text: error, type: "error" })
             } else {
                 setMessage({ text: success, type: "success" })
+                window.location.reload()
             }
 
 
