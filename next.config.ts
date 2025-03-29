@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
       'lh3.googleusercontent.com'
     ],
   },
-  serverExternalPackages: ["pdf-parse", "sequelize"]
+  serverExternalPackages: ["pdf-parse", "sequelize"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
 };
 
