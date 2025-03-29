@@ -102,7 +102,7 @@ function ConfigureQuiz({ getSize, setSize, getDifficulty, setDifficulty }: {
                         <Label htmlFor="size" className="text-right">
                             Number of questions
                         </Label>
-                        <Input type="number" defaultValue={getSize} min={20} max={100} id="size" onChange={(e) => setSize(Number(e.target.value))} className="col-span-3" />
+                        <Input type="number" defaultValue={getSize} min={5} max={40} id="size" onChange={(e) => setSize(Number(e.target.value))} className="col-span-3" />
                     </div>
                 </div>
                 <DialogFooter>

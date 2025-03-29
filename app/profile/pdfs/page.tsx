@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import ChooseFileButton from "@/app/components/ChooseFileButton";
-import { stringify } from "querystring";
 
 interface PDFAttributes {
     id?: string;
