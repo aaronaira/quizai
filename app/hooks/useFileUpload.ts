@@ -52,8 +52,10 @@ export function useFileUpload() {
         try {
             const response = await fetch('/api/pdf', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                cache: 'no-store'
             })
+
 
             if (response.status === 401) {
                 router.push('/signin')
