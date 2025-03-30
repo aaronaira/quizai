@@ -55,7 +55,10 @@ export function useFileUpload() {
                 body: formData
             })
 
-            if (response.status === 401) router.push('/signin')
+            if (response.status === 401) {
+                router.push('/signin')
+                return
+            }
 
             const data = await response.json()
 
