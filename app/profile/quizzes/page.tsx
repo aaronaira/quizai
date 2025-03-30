@@ -108,12 +108,12 @@ function Quizzes() {
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} id="quiz-form">
-                        {JSON.parse(quiz.questions).map((question: any) => {
+                        {JSON.parse(quiz.questions).map((question: any, index: number) => {
                             const answerState = answers[question.id];
 
                             return (
                                 <div key={question.id} className="flex flex-col mb-4 p-2 border rounded-lg">
-                                    <label className="text-lg font-semibold">{question.question}</label>
+                                    <label className="text-lg font-semibold">{index + 1}. {question.question}</label>
                                     {["A", "B", "C"].map((option) => {
                                         const isUserAnswer = answerState?.userAnswer === option;
                                         const isCorrectAnswer = question.correct === option;
