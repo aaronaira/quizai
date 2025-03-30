@@ -11,6 +11,7 @@ import { Model } from 'sequelize';
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    debug: true,
     adapter: SequelizeAdapter(sequelize),
     providers: [
         GitHub,
