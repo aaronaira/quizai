@@ -10,57 +10,62 @@ import { models } from "@/app/models";
 import { Model } from 'sequelize';
 
 
+// export const { handlers, signIn, signOut, auth } = NextAuth({
+//     providers: [
+//         GitHub({
+//             clientId: process.env.GITHUB_ID,
+//             clientSecret: process.env.GITHUB_SECRET,
+//         }),
+//     ],
+//     secret: process.env.AUTH_SECRET,
+//     trustHost: true,
+// });
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    debug: true,
+    adapter: SequelizeAdapter(sequelize),
     providers: [
         GitHub({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
         }),
+        Google,
+        Credentials({
+            authorize: async (credentials) => {
+                const { data, success } = signInSchema.safeParse(credentials)
+                if (!success) throw new Error('User information is wrong')
+
+                const user = await models.User.findOne({ where: { email: data.email } })
+
+                if (!user) throw new Error("User doesn't exists")
+
+                if (!await user.comparePassword(data.password)) throw new Error("Password doesn't match")
+
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    image: user.image
+                };
+            }
+        })
     ],
     secret: process.env.AUTH_SECRET,
     trustHost: true,
-});
+    session: { strategy: 'jwt' },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id as string;
+            }
+            return token;
+        },
 
-// export const { handlers, signIn, signOut, auth } = NextAuth({
-//     debug: true,
-//     adapter: SequelizeAdapter(sequelize),
-//     providers: [
-//         GitHub,
-//         Google,
-//         Credentials({
-//             authorize: async (credentials) => {
-//                 const { data, success } = signInSchema.safeParse(credentials)
-//                 if (!success) throw new Error('User information is wrong')
-
-//                 const user = await models.User.findOne({ where: { email: data.email } })
-
-//                 if (!user) throw new Error("User doesn't exists")
-
-//                 if (!await user.comparePassword(data.password)) throw new Error("Password doesn't match")
-
-//                 return {
-//                     id: user.id,
-//                     name: user.name,
-//                     email: user.email,
-//                     image: user.image
-//                 };
-//             }
-//         })
-//     ],
-//     session: { strategy: 'jwt' },
-//     callbacks: {
-//         async jwt({ token, user }) {
-//             if (user) {
-//                 token.id = user.id as string;
-//             }
-//             return token;
-//         },
-
-//         async session({ session, token }) {
-//             if (session.user && typeof token.id === 'string') {
-//                 session.user.id = token.id as string;
-//             }
-//             return session;
-//         },
-//     }
-// })
+        async session({ session, token }) {
+            if (session.user && typeof token.id === 'string') {
+                session.user.id = token.id as string;
+            }
+            return session;
+        },
+    }
+})
