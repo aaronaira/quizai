@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import { unlink } from 'fs/promises';
 import { models } from '@/app/models';
 
-const BASE_DIR = path.join(process.cwd(), "tmp");
+const BASE_DIR = "/tmp";
 
 export async function getAll(userId: string, page = 1, limit: number = 10) {
     try {
