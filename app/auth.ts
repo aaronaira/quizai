@@ -22,14 +22,17 @@ import { Model } from 'sequelize';
 // });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    debug: true,
+    debug: false,
     adapter: SequelizeAdapter(sequelize),
     providers: [
         GitHub({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
         }),
-        Google,
+        Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET
+        }),
         Credentials({
             authorize: async (credentials) => {
                 const { data, success } = signInSchema.safeParse(credentials)
