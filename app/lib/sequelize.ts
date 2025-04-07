@@ -11,7 +11,7 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
         acquire: 60000, // tiempo máximo para intentar conectar (milisegundos)
         idle: 10000 // tiempo de espera antes de liberar una conexión (milisegundos)
     },
-    logging: true
+    logging: false
 });
 
 
