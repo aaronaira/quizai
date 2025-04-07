@@ -5,7 +5,13 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
     host: process.env.DB_HOST,
     dialect: "mysql",
     dialectModule: require('mysql2'),
-    logging: false
+    pool: {
+        max: 10, // conexiones máximas
+        min: 0,
+        acquire: 60000, // tiempo máximo para intentar conectar (milisegundos)
+        idle: 10000 // tiempo de espera antes de liberar una conexión (milisegundos)
+    },
+    logging: true
 });
 
 
