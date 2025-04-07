@@ -5,6 +5,12 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
     host: process.env.DB_HOST,
     dialect: "mysql",
     dialectModule: require('mysql2'),
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // A menos que tengas un certificado CA personalizado
+        }
+    },
     pool: {
         max: 10, // conexiones máximas
         min: 0,
